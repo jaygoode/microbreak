@@ -2,37 +2,11 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from "react";
+import Timer from "./components/timer/timer";
+import InputTimer from "./components/timer/inputTime";
 
 const Home: NextPage = () => {
-  const [days, setDays] = useState(0);
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
-
-  useEffect(() => {
-    const target = new Date("9/25/2022 23:59:59");
-    console.log(target);
-
-    const interval = setInterval(() => {
-      const now = new Date();
-      const diff = target.getTime() - now.getTime();
-
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      setDays(d);
-
-      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      setHours(h);
-
-      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      setMinutes(m);
-
-      const s = Math.floor((diff % (1000 * 60)) / 1000);
-      setSeconds(s);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
+  const [timerFinished, setTimerFinished] = useState(true);
   return (
     <div className={styles.container}>
       <Head>
@@ -46,26 +20,7 @@ const Home: NextPage = () => {
         className="asmon"
         src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FVipDXeuZWok%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=29006df4feffe72285223d8a6a0ea0adfbf2a3009a9a9d709ba79f2884ca2f59&ipo=images"
       ></img>
-      <div className="timer-wrapper">
-        <div className="timer-inner">
-          {/* <div className="timer-segment">
-            <span className="time">{days}</span>
-            <span className="label">days</span>
-          </div> */}
-          <div className="timer-segment">
-            <span className="time">{hours}</span>
-            <span className="label">Hr</span>
-          </div>
-          <div className="timer-segment">
-            <span className="time">{minutes}</span>
-            <span className="label">min</span>
-          </div>
-          <div className="timer-segment">
-            <span className="time">{seconds}</span>
-            <span className="label">sec</span>
-          </div>
-        </div>
-      </div>
+      <InputTimer />
     </div>
   );
 };
