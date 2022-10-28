@@ -21,19 +21,20 @@ const InputTimer = () => {
   };
 
   let microBreakCounter = 0;
+  let totalTimeCounter = 0;
+  const timeRandomizationDeviation = Math.floor(Math.random() * 60);
 
-  const coinFlip = () => {
+  const timeUntilMicroBreak = () => {
+    const interval = 120;
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
-      return "+";
+      const nextMicroBreak = interval + timeRandomizationDeviation;
+      return nextMicroBreak;
     } else {
-      return "-";
+      const nextMicroBreak = interval - timeRandomizationDeviation;
+      return nextMicroBreak;
     }
   };
-  console.log(coinFlip());
-
-  const timeRandomizationDeviation = Math.floor(Math.random() * 60);
-  console.log(timeRandomizationDeviation);
 
   useEffect(() => {
     const studySessionInterval = setInterval(() => {
@@ -45,6 +46,8 @@ const InputTimer = () => {
         microBreakCounter = 0;
         setIsMicroBreak(false);
       }
+
+      totalTimeCounter += 1;
 
       let h = parseInt(hours);
       let m = parseInt(minutes);
