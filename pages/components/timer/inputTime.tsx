@@ -2,6 +2,7 @@ import React from "react";
 import { timerProps } from "./timerInterface";
 import { useEffect, useState } from "react";
 import Timer from "./timer";
+import { time } from "console";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
@@ -20,18 +21,22 @@ const InputTimer = () => {
   };
 
   let microBreakCounter = 0;
+
+  const coinFlip = () => {
+    const plusOrMinus = Math.random() < 0.5;
+    if (plusOrMinus) {
+      return "+";
+    } else {
+      return "-";
+    }
+  };
+  console.log(coinFlip());
+
+  const timeRandomizationDeviation = Math.floor(Math.random() * 60);
+  console.log(timeRandomizationDeviation);
+
   useEffect(() => {
     const studySessionInterval = setInterval(() => {
-      const coinFlip = () => {
-        const plusOrMinus = Math.random() < 0.5;
-        if (plusOrMinus) {
-          return "+";
-        } else {
-          return "-";
-        }
-      };
-      console.log(coinFlip());
-
       if (isMicroBreak) {
         microBreakCounter += 1;
       }
