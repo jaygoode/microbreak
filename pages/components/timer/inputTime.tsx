@@ -2,12 +2,11 @@ import React from "react";
 import { timerProps } from "./timerInterface";
 import { useEffect, useState } from "react";
 import Timer from "./timer";
-import { time } from "console";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
-  const [isMicroBreak, setIsMicroBreak] = useState(true);
+  const [isMicroBreak, setIsMicroBreak] = useState(false);
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("0");
   const [seconds, setSeconds] = useState("0");
@@ -22,24 +21,34 @@ const InputTimer = () => {
 
   let microBreakCounter = 0;
   let totalTimeCounter = 0;
-  let timeRandomizationDeviation = Math.floor(Math.random() * 60);
+  let timeToMicroBreak = 0;
+  let timeRandomizationDeviation = Math.floor(Math.random() * 20);
 
   const timeUntilMicroBreak = () => {
-    let interval = 120;
+    timeToMicroBreak = 120;
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
-      interval += timeRandomizationDeviation;
-      console.log("nextMicroBreak = " + interval);
-      return interval;
+      timeToMicroBreak += timeRandomizationDeviation;
+      console.log("nextMicroBreak = " + timeToMicroBreak);
+      return timeToMicroBreak;
     } else {
-      interval -= timeRandomizationDeviation;
-      console.log("nextMicroBreak = " + interval);
-      return interval;
+      timeToMicroBreak -= timeRandomizationDeviation;
+      console.log("nextMicroBreak = " + timeToMicroBreak);
+      return timeToMicroBreak;
     }
   };
 
   useEffect(() => {
+    timeUntilMicroBreak();
     const studySessionInterval = setInterval(() => {
+      totalTimeCounter += 1;
+
+      if (totalTimeCounter === timeToMicroBreak) {
+        setIsMicroBreak(true);
+        totalTimeCounter = 0;
+        console.log(isMicroBreak);
+      }
+
       if (isMicroBreak) {
         // console.log("microcounter = " + microBreakCounter);
         microBreakCounter += 1;
@@ -51,10 +60,8 @@ const InputTimer = () => {
         timeUntilMicroBreak();
       }
 
+      console.log("tot = " + totalTimeCounter + "micro" + microBreakCounter);
       // console.log("timeRandDev = " + timeRandomizationDeviation);
-
-      totalTimeCounter += 1;
-
       // console.log("totalcounter = " + totalTimeCounter);
 
       let h = parseInt(hours);
@@ -88,7 +95,7 @@ const InputTimer = () => {
       if (h <= 0 && m <= 0 && s <= 0) {
         setTimerFinished(true);
       }
-    }, 1000);
+    }, 100);
 
     const microBreakInterval = setInterval(() => {}, 1000);
 
