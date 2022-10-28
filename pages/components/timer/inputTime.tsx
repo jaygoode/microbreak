@@ -7,7 +7,7 @@ import { time } from "console";
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
-  const [isMicroBreak, setIsMicroBreak] = useState(false);
+  const [isMicroBreak, setIsMicroBreak] = useState(true);
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("0");
   const [seconds, setSeconds] = useState("0");
@@ -22,32 +22,40 @@ const InputTimer = () => {
 
   let microBreakCounter = 0;
   let totalTimeCounter = 0;
-  const timeRandomizationDeviation = Math.floor(Math.random() * 60);
+  let timeRandomizationDeviation = Math.floor(Math.random() * 60);
 
   const timeUntilMicroBreak = () => {
-    const interval = 120;
+    let interval = 120;
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
-      const nextMicroBreak = interval + timeRandomizationDeviation;
-      return nextMicroBreak;
+      interval += timeRandomizationDeviation;
+      console.log("nextMicroBreak = " + interval);
+      return interval;
     } else {
-      const nextMicroBreak = interval - timeRandomizationDeviation;
-      return nextMicroBreak;
+      interval -= timeRandomizationDeviation;
+      console.log("nextMicroBreak = " + interval);
+      return interval;
     }
   };
 
   useEffect(() => {
     const studySessionInterval = setInterval(() => {
       if (isMicroBreak) {
+        // console.log("microcounter = " + microBreakCounter);
         microBreakCounter += 1;
       }
 
       if (microBreakCounter >= 10) {
         microBreakCounter = 0;
         setIsMicroBreak(false);
+        timeUntilMicroBreak();
       }
 
+      // console.log("timeRandDev = " + timeRandomizationDeviation);
+
       totalTimeCounter += 1;
+
+      // console.log("totalcounter = " + totalTimeCounter);
 
       let h = parseInt(hours);
       let m = parseInt(minutes);
