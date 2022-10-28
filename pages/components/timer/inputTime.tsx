@@ -19,7 +19,7 @@ const InputTimer = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const studySessionInterval = setInterval(() => {
       let h = parseInt(hours);
       let m = parseInt(minutes);
       let s = parseInt(seconds);
@@ -53,7 +53,9 @@ const InputTimer = () => {
       }
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(studySessionInterval);
+
+    const microBreakInterval = setInterval(() => {}, 1000);
   }, [submitHandler]);
 
   return (
