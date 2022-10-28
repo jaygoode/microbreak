@@ -6,6 +6,7 @@ import Timer from "./timer";
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
+  const [isMicroBreak, setIsMicroBreak] = useState(false);
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("0");
   const [seconds, setSeconds] = useState("0");
@@ -18,8 +19,28 @@ const InputTimer = () => {
     setSeconds(e.target[2].value);
   };
 
+  let microBreakCounter = 0;
   useEffect(() => {
     const studySessionInterval = setInterval(() => {
+      const coinFlip = () => {
+        const plusOrMinus = Math.random() < 0.5;
+        if (plusOrMinus) {
+          return "+";
+        } else {
+          return "-";
+        }
+      };
+      console.log(coinFlip());
+
+      if (isMicroBreak) {
+        microBreakCounter += 1;
+      }
+
+      if (microBreakCounter >= 10) {
+        microBreakCounter = 0;
+        setIsMicroBreak(false);
+      }
+
       let h = parseInt(hours);
       let m = parseInt(minutes);
       let s = parseInt(seconds);
@@ -53,9 +74,12 @@ const InputTimer = () => {
       }
     }, 1000);
 
-    return () => clearInterval(studySessionInterval);
-
     const microBreakInterval = setInterval(() => {}, 1000);
+
+    return () => {
+      clearInterval(studySessionInterval);
+      clearInterval(microBreakInterval);
+    };
   }, [submitHandler]);
 
   return (
