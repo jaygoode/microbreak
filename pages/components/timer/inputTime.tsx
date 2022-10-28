@@ -5,8 +5,8 @@ import Timer from "./timer";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
-  const [isTimeSet, setIsTimeSet] = useState(false);
   const [isMicroBreak, setIsMicroBreak] = useState(false);
+  const [isTimeSet, setIsTimeSet] = useState(false);
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("0");
   const [seconds, setSeconds] = useState("0");
@@ -105,6 +105,8 @@ const InputTimer = () => {
     };
   }, [submitHandler]);
 
+  const alarm = document.getElementById("alarm-audio");
+
   return (
     <div>
       {isTimeSet ? (
@@ -112,6 +114,9 @@ const InputTimer = () => {
       ) : (
         <div className="timer-wrapper">
           <div className="timer-inner">
+            <audio id="alarm-audio">
+              <source src="./mixkit-shaker-bell-alert-599.mp3" />
+            </audio>
             <div className="timer-segment">
               <form onSubmit={submitHandler}>
                 <input
