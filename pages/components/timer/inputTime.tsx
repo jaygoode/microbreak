@@ -5,27 +5,34 @@ import Timer from "./timer";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
-  const [isMicroBreak, setIsMicroBreak] = useState(false);
+  // const [isMicroBreak, setIsMicroBreak] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("0");
   const [seconds, setSeconds] = useState("0");
 
   const submitHandler = (e: any) => {
-    setIsTimeSet(true);
     e.preventDefault();
+    microBreakCounter = 0;
+    totalTimeCounter = 0;
+    setIsTimeSet(true);
     setHours(e.target[0].value);
     setMinutes(e.target[1].value);
     setSeconds(e.target[2].value);
   };
 
+  const cancelTimerHandler = () => {
+    setIsTimeSet(false);
+  };
+
   let microBreakCounter = 0;
   let totalTimeCounter = 0;
   let timeToMicroBreak = 0;
-  let timeRandomizationDeviation = Math.floor(Math.random() * 20);
+  let microBreak = false;
 
   const timeUntilMicroBreak = () => {
-    timeToMicroBreak = 120;
+    let timeRandomizationDeviation = Math.floor(Math.random() * 20);
+    timeToMicroBreak = 30;
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
       timeToMicroBreak += timeRandomizationDeviation;
@@ -39,38 +46,32 @@ const InputTimer = () => {
   };
 
   useEffect(() => {
+    console.log(microBreak);
     timeUntilMicroBreak();
     const studySessionInterval = setInterval(() => {
-      totalTimeCounter += 1;
+      if (isTimeSet) {
+        if (microBreak) {
+          microBreakCounter += 1;
+        }
 
-      if (totalTimeCounter === timeToMicroBreak) {
-        setIsMicroBreak(true);
-        totalTimeCounter = 0;
-        console.log(isMicroBreak);
+        if (totalTimeCounter === timeToMicroBreak) {
+          console.log("fuckyou");
+          microBreak = true;
+          totalTimeCounter = 0;
+        }
+
+        if (microBreakCounter >= 10) {
+          console.log("ismicro" + microBreak);
+          microBreakCounter = 0;
+          microBreak = false;
+          timeUntilMicroBreak();
+        }
+
+        console.log("tot = " + totalTimeCounter + "micro" + microBreakCounter);
       }
-
-      if (isMicroBreak) {
-        // console.log("microcounter = " + microBreakCounter);
-        microBreakCounter += 1;
-      }
-
-      if (microBreakCounter >= 10) {
-        microBreakCounter = 0;
-        setIsMicroBreak(false);
-        timeUntilMicroBreak();
-      }
-
-      console.log("tot = " + totalTimeCounter + "micro" + microBreakCounter);
-      // console.log("timeRandDev = " + timeRandomizationDeviation);
-      // console.log("totalcounter = " + totalTimeCounter);
-
       let h = parseInt(hours);
       let m = parseInt(minutes);
       let s = parseInt(seconds);
-
-      //   if (h > 0) {
-      //     setHours(String(h));
-      //   }
 
       if (m > 0) {
         setMinutes(String(m));
@@ -95,28 +96,25 @@ const InputTimer = () => {
       if (h <= 0 && m <= 0 && s <= 0) {
         setTimerFinished(true);
       }
+      totalTimeCounter += 1;
     }, 100);
-
-    const microBreakInterval = setInterval(() => {}, 1000);
 
     return () => {
       clearInterval(studySessionInterval);
-      clearInterval(microBreakInterval);
     };
-  }, [submitHandler]);
-
-  const alarm = document.getElementById("alarm-audio");
+  }, [isTimeSet]);
 
   return (
     <div>
       {isTimeSet ? (
-        <Timer hours={hours} minutes={minutes} seconds={seconds} />
+        <>
+          <button onClick={cancelTimerHandler}>cancel</button>
+          {microBreak && <p>{microBreakCounter}</p>}
+          <Timer hours={hours} minutes={minutes} seconds={seconds} />
+        </>
       ) : (
         <div className="timer-wrapper">
           <div className="timer-inner">
-            <audio id="alarm-audio">
-              <source src="./mixkit-shaker-bell-alert-599.mp3" />
-            </audio>
             <div className="timer-segment">
               <form onSubmit={submitHandler}>
                 <input
