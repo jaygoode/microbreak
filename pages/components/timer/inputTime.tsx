@@ -7,9 +7,9 @@ const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
   // const [isMicroBreak, setIsMicroBreak] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
-  const [hours, setHours] = useState("0");
-  const [minutes, setMinutes] = useState("0");
-  const [seconds, setSeconds] = useState("0");
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
 
   const submitHandler = (e: any) => {
     e.preventDefault();
@@ -48,14 +48,15 @@ const InputTimer = () => {
   useEffect(() => {
     console.log(microBreak);
     timeUntilMicroBreak();
-    const studySessionInterval = setInterval(() => {
+    let intervalId = null;
+    intervalId = setInterval(() => {
       if (isTimeSet) {
         if (microBreak) {
           microBreakCounter += 1;
         }
 
         if (totalTimeCounter === timeToMicroBreak) {
-          console.log("fuckyou");
+          console.log("total is same as time to micro if statement");
           microBreak = true;
           totalTimeCounter = 0;
         }
@@ -69,41 +70,41 @@ const InputTimer = () => {
 
         console.log("tot = " + totalTimeCounter + "micro" + microBreakCounter);
       }
-      let h = parseInt(hours);
-      let m = parseInt(minutes);
-      let s = parseInt(seconds);
+      let h = hours;
+      let m = minutes;
+      let s = seconds;
 
-      if (m > 0) {
-        setMinutes(String(m));
-      } else if (m < 1 && h > 0) {
+      if (minutes > 0) {
+        // setMinutes(prev => prev -1);
+      } else if (minutes < 1 && hours > 0) {
         m = 59;
         h -= 1;
-        setHours(String(h));
-        setMinutes(String(m));
+        setHours((prev) => prev - 1);
+        setMinutes((prev) => (prev = m));
       }
 
-      if (s > 0) {
-        s -= 1;
-
-        setSeconds(String(s));
-      } else if (s <= 0 && m > 0) {
+      if (seconds > 0) {
+        setSeconds((prev) => prev - 1);
+      } else if (seconds <= 0 && minutes > 0) {
+        console.log("neg min");
         s = 59;
         m -= 1;
-        setMinutes(String(m));
-        setSeconds(String(s));
+        setMinutes((prev) => prev - 1);
+        setSeconds((prev) => prev + 59);
       }
 
-      if (h <= 0 && m <= 0 && s <= 0) {
+      if (hours <= 0 && minutes <= 0 && seconds <= 0) {
         setTimerFinished(true);
       }
       totalTimeCounter += 1;
-    }, 100);
+    }, 1000);
 
-    return () => {
-      clearInterval(studySessionInterval);
-    };
+    if (isTimeSet === false) {
+      clearInterval(intervalId);
+    }
   }, [isTimeSet]);
 
+  console.log(seconds);
   return (
     <div>
       {isTimeSet ? (
