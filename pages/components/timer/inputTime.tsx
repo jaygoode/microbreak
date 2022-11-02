@@ -2,6 +2,7 @@ import React from "react";
 import { timerProps } from "./timerInterface";
 import { useEffect, useState } from "react";
 import Timer from "./timer";
+// import bell from "pages/components/timer/bell.mp3";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
@@ -46,13 +47,13 @@ const InputTimer = () => {
   };
 
   const breakAlert = (e: any) => {
+    // const alarm = new Audio(bell);
     e.preventDefault();
-    let audio = document.getElementById("a1") as HTMLVideoElement | null;
+    let audio = document.getElementById("a1") as HTMLAudioElement | null;
     if (audio) {
       audio.play();
     }
   };
-
   useEffect(() => {
     console.log(microBreak);
     timeUntilMicroBreak();
@@ -174,11 +175,16 @@ const InputTimer = () => {
                 <button type="submit" value="Submit">
                   Start
                 </button>
-                <button onClick={breakAlert}>sound</button>
                 <audio
                   id="a1"
-                  src="./sounds/mixkit-shaker-bell-alert-599.mp3"
-                ></audio>
+                  src="/resources/bell.mp3"
+                  crossOrigin="anonymous"
+                  preload="auto"
+                >
+                  Your browser does not support the
+                  <code>audio</code> element.
+                </audio>
+                <button onClick={breakAlert}>sound</button>
               </form>
             </div>
           </div>
