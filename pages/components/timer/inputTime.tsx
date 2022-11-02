@@ -45,6 +45,14 @@ const InputTimer = () => {
     }
   };
 
+  const breakAlert = (e: any) => {
+    e.preventDefault();
+    let audio = document.getElementById("a1") as HTMLVideoElement | null;
+    if (audio) {
+      audio.play();
+    }
+  };
+
   useEffect(() => {
     console.log(microBreak);
     timeUntilMicroBreak();
@@ -74,23 +82,41 @@ const InputTimer = () => {
       let m = minutes;
       let s = seconds;
 
-      if (minutes > 0) {
-        // setMinutes(prev => prev -1);
-      } else if (minutes < 1 && hours > 0) {
+      if (m > 0) {
+      } else if (m < 1 && h > 0) {
+        m = 59;
+        h -= 1;
+        console.log(h);
+      }
+      if (s > 0) {
+        s -= 1;
+        console.log(s);
+        // setSeconds(s);
+      } else if (s <= 0 && m > 0) {
+        s = 59;
+        m -= 1;
+        console.log(m);
+      }
+      if (h <= 0 && m <= 0 && s <= 0) {
+        setTimerFinished(true);
+      }
+
+      if (minutes < 1 && hours > 0) {
         m = 59;
         h -= 1;
         setHours((prev) => prev - 1);
         setMinutes((prev) => (prev = m));
       }
 
-      if (seconds > 0) {
+      if (s > 0) {
+        s -= 1;
         setSeconds((prev) => prev - 1);
-      } else if (seconds <= 0 && minutes > 0) {
+      } else if (s <= 0 && m > 0) {
         console.log("neg min");
         s = 59;
         m -= 1;
-        setMinutes((prev) => prev - 1);
-        setSeconds((prev) => prev + 59);
+        setMinutes(m);
+        setSeconds(59);
       }
 
       if (hours <= 0 && minutes <= 0 && seconds <= 0) {
@@ -148,6 +174,11 @@ const InputTimer = () => {
                 <button type="submit" value="Submit">
                   Start
                 </button>
+                <button onClick={breakAlert}>sound</button>
+                <audio
+                  id="a1"
+                  src="./sounds/mixkit-shaker-bell-alert-599.mp3"
+                ></audio>
               </form>
             </div>
           </div>
