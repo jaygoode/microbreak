@@ -7,5 +7,13 @@
   display: flex;
   gap: 1;
   font-weight: 900;
-  font-size: 5rem;
+  font-size: 4rem;
+}
+
+.time-input {
+  text-align: center;
+  border: 2px solid white;
+  margin: 0.2em;
+  font-size: large;
+  border-radius: 5px;
 }

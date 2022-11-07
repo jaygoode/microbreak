@@ -6,11 +6,11 @@ import Timer from "./timer";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
-  // const [isMicroBreak, setIsMicroBreak] = useState(true);
+  const [isMicroBreak, setIsMicroBreak] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
+  const [hours, setHours] = useState(20);
+  const [minutes, setMinutes] = useState(20);
+  const [seconds, setSeconds] = useState(20);
 
   const submitHandler = (e: any) => {
     e.preventDefault();
@@ -20,10 +20,6 @@ const InputTimer = () => {
     setHours(e.target[0].value);
     setMinutes(e.target[1].value);
     setSeconds(e.target[2].value);
-  };
-
-  const cancelTimerHandler = () => {
-    setIsTimeSet(false);
   };
 
   let microBreakCounter = 0;
@@ -47,18 +43,17 @@ const InputTimer = () => {
   };
 
   const breakAlert = (e: any) => {
-    // const alarm = new Audio(bell);
     e.preventDefault();
     let audio = document.getElementById("a1") as HTMLAudioElement | null;
     if (audio) {
       audio.play();
     }
   };
+
   useEffect(() => {
-    console.log(microBreak);
     timeUntilMicroBreak();
-    let intervalId = null;
-    intervalId = setInterval(() => {
+
+    let intervalId = setInterval(() => {
       if (isTimeSet) {
         if (microBreak) {
           microBreakCounter += 1;
@@ -78,74 +73,48 @@ const InputTimer = () => {
         }
 
         console.log("tot = " + totalTimeCounter + "micro" + microBreakCounter);
-      }
-      let h = hours;
-      let m = minutes;
-      let s = seconds;
 
-      if (m > 0) {
-      } else if (m < 1 && h > 0) {
-        m = 59;
-        h -= 1;
-        console.log(h);
-      }
-      if (s > 0) {
-        s -= 1;
-        console.log(s);
-        // setSeconds(s);
-      } else if (s <= 0 && m > 0) {
-        s = 59;
-        m -= 1;
-        console.log(m);
-      }
-      if (h <= 0 && m <= 0 && s <= 0) {
-        setTimerFinished(true);
-      }
+        let h = hours;
+        let m = minutes;
+        let s = seconds;
+        if (seconds > 0) {
+          setSeconds((prev) => prev - 1);
+        } else if (seconds <= 0 && m > 0) {
+          s = 59;
+          console.log(s);
+          setSeconds(s);
+          setMinutes(m - 1);
+        }
+        if (m < 1 && h > 0) {
+          setHours(h - 1);
+          setMinutes((m = 59));
+        }
+        if (h <= 0 && m <= 0 && seconds <= 0) {
+          setTimerFinished(true);
+        }
 
-      if (minutes < 1 && hours > 0) {
-        m = 59;
-        h -= 1;
-        setHours((prev) => prev - 1);
-        setMinutes((prev) => (prev = m));
+        totalTimeCounter += 1;
       }
-
-      if (s > 0) {
-        s -= 1;
-        setSeconds((prev) => prev - 1);
-      } else if (s <= 0 && m > 0) {
-        console.log("neg min");
-        s = 59;
-        m -= 1;
-        setMinutes(m);
-        setSeconds(59);
-      }
-
-      if (hours <= 0 && minutes <= 0 && seconds <= 0) {
-        setTimerFinished(true);
-      }
-      totalTimeCounter += 1;
     }, 1000);
 
     if (isTimeSet === false) {
       clearInterval(intervalId);
     }
   }, [isTimeSet]);
+  const cancelTimerHandler = (intervalId: any) => {
+    setIsTimeSet(false);
+    clearInterval(intervalId);
+  };
 
-  console.log(seconds);
   return (
     <div>
       {isTimeSet ? (
-        <>
-          <button onClick={cancelTimerHandler}>cancel</button>
-          {microBreak && <p>{microBreakCounter}</p>}
-          <Timer hours={hours} minutes={minutes} seconds={seconds} />
-        </>
-      ) : (
         <div className="timer-wrapper">
           <div className="timer-inner">
             <div className="timer-segment">
               <form onSubmit={submitHandler}>
                 <input
+                  className="time-input"
                   type="number"
                   id="hours"
                   name="hours"
@@ -155,6 +124,7 @@ const InputTimer = () => {
                   defaultValue="00"
                 />
                 <input
+                  className="time-input"
                   type="number"
                   id="minutes"
                   name="minutes"
@@ -164,6 +134,7 @@ const InputTimer = () => {
                   defaultValue="00"
                 />
                 <input
+                  className="time-input"
                   type="number"
                   id="seconds"
                   name="seconds"
@@ -172,10 +143,8 @@ const InputTimer = () => {
                   step="1"
                   defaultValue="00"
                 />
-                <button type="submit" value="Submit">
-                  Start
-                </button>
                 <audio
+                  controls
                   id="a1"
                   src="/resources/bell.mp3"
                   crossOrigin="anonymous"
@@ -184,11 +153,24 @@ const InputTimer = () => {
                   Your browser does not support the
                   <code>audio</code> element.
                 </audio>
-                <button onClick={breakAlert}>sound</button>
+                <button type="submit" value="Submit" className="time-input">
+                  Start
+                </button>
+                <button onClick={breakAlert} className="time-input">
+                  sound
+                </button>
               </form>
             </div>
           </div>
         </div>
+      ) : (
+        <>
+          <button onClick={cancelTimerHandler} className="time-input">
+            cancel
+          </button>
+          {microBreak && <p>{microBreakCounter}</p>}
+          <Timer hours={hours} minutes={minutes} seconds={seconds} />
+        </>
       )}
     </div>
   );
