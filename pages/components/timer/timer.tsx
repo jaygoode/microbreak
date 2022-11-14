@@ -17,6 +17,16 @@ const timer = ({ hours, minutes, seconds }: timerProps) => {
           <span className="time">{seconds}</span>
           <span className="label"></span>
         </div>
+        <audio
+          // controls
+          id="a1"
+          src="/resources/bell.mp3"
+          crossOrigin="anonymous"
+          preload="auto"
+        >
+          Your browser does not support the
+          <code>audio</code> element.
+        </audio>
       </div>
     </div>
   );

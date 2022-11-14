@@ -17,3 +17,9 @@
   font-size: large;
   border-radius: 5px;
 }
+
+.timer-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
