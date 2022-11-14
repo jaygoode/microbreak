@@ -1,27 +1,29 @@
 import React from "react";
-import { timerProps } from "./timerInterface";
+// import { timerProps } from "./TimerInterface";
 import { useEffect, useState, useRef } from "react";
-import Timer from "./timer";
+import Timer from "./Timer";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
   const [isMicroBreak, setIsMicroBreak] = useState(false);
   const [isTimeSet, setIsTimeSet] = useState(false);
-  // const [hours, setHours] = useState(20);
-  // const [minutes, setMinutes] = useState(20);
-  // const [seconds, setSeconds] = useState(20);
-  const seconds = useRef(0);
-  const minutes = useRef(0);
-  const hours = useRef(0);
+  const [prevTime, setPrevTime] = useState(null);
+  const [seconds, setSeconds] = useState(1500);
+  const interval = useRef<any>(null);
+  const [hours, setHours] = useState(20);
+  const [minutes, setMinutes] = useState(20);
 
   const submitHandler = (e: any) => {
     e.preventDefault();
     microBreakCounter = 0;
     totalTimeCounter = 0;
     setIsTimeSet(true);
-    hours.current = e.target[0].value;
-    minutes.current = e.target[1].value;
-    seconds.current = e.target[2].value;
+    setSeconds(
+      e.target[2].value + e.target[1].value * 60 + e.target[0].value * 3600
+    );
+    console.log(e.target[0].value * 3600);
+    console.log(e.target[1].value * 60);
+    console.log(e.target[2].value);
   };
 
   let microBreakCounter = 0;
@@ -52,60 +54,25 @@ const InputTimer = () => {
   };
 
   useEffect(() => {
-    timeUntilMicroBreak();
-
-    // breakAlert();
-    let intervalId = setInterval(() => {
-      if (isTimeSet) {
-        if (microBreak) {
-          microBreakCounter += 1;
-        }
-        if (totalTimeCounter === timeToMicroBreak) {
-          console.log("total is same as time to micro if statement");
-          microBreak = true;
-          totalTimeCounter = 0;
-        }
-
-        if (microBreakCounter >= 10) {
-          console.log("ismicro" + microBreak);
-          microBreakCounter = 0;
-          microBreak = false;
-          timeUntilMicroBreak();
-        }
-
-        console.log("tot = " + totalTimeCounter + "micro" + microBreakCounter);
-
-        if (seconds.current > 0) {
-          seconds.current = seconds.current - 1;
-        } else if (seconds.current <= 0 && minutes.current > 0) {
-          seconds.current = 59;
-          minutes.current = minutes.current - 1;
-        }
-        if (minutes.current < 1 && hours.current > 0) {
-          hours.current = hours.current - 1;
-          minutes.current = minutes.current + 59;
-        }
-        if (
-          hours.current <= 0 &&
-          minutes.current <= 0 &&
-          seconds.current <= 0
-        ) {
-          setTimerFinished(true);
-        }
-
-        totalTimeCounter += 1;
-      }
-    }, 100);
-
-    if (isTimeSet === false) {
-      clearInterval(intervalId);
+    if (isTimeSet) {
+      interval.current = setInterval(
+        () => setSeconds((prevSeconds) => prevSeconds - 1),
+        1000
+      );
     }
+    return () => clearInterval(interval.current);
   }, [isTimeSet]);
 
-  const cancelTimerHandler = (intervalId: any) => {
+  const cancelTimerHandler = () => {
     setIsTimeSet(false);
-    clearInterval(intervalId);
   };
+
+  useEffect(() => {
+    if (seconds <= 0) {
+      setIsTimeSet(false);
+      clearInterval(interval.current);
+    }
+  }, [seconds]);
 
   return (
     <div>
@@ -169,12 +136,9 @@ const InputTimer = () => {
           <button onClick={cancelTimerHandler} className="time-input">
             cancel
           </button>
+          {seconds}
           {microBreak && <p>{microBreakCounter}</p>}
-          <Timer
-            hours={hours.current}
-            minutes={minutes.current}
-            seconds={seconds.current}
-          />
+          <Timer hours={hours} minutes={minutes} seconds={seconds} />
         </>
       )}
     </div>
