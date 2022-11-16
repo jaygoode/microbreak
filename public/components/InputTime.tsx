@@ -5,24 +5,26 @@ const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
   const [prevTime, setPrevTime] = useState(null);
-  const [seconds, setSeconds] = useState(1500);
+  const [seconds, setSeconds] = useState(0);
   const interval = useRef<any>(null);
-  const [hours, setHours] = useState(20);
-  const [minutes, setMinutes] = useState(20);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
   const isMicroBreak = useRef(false);
   const tenSecBreak = useRef(0);
   const totalTimeCounter = useRef(0);
-  const timeToMicroBreak = useRef(0);
+  const timeToMicroBreak = useRef(1);
 
   const submitHandler = (e: any) => {
     e.preventDefault();
     totalTimeCounter.current = 0;
     timeToMicroBreak.current = 1;
-    tenSecBreak.current = 0;
+    tenSecBreak.current = 10;
+    isMicroBreak.current = false;
     setIsTimeSet(true);
     setSeconds(e.target[2].value);
     setMinutes(e.target[1].value);
     setHours(e.target[0].value);
+    timeUntilMicroBreak();
   };
 
   const timeUntilMicroBreak = () => {
@@ -35,20 +37,20 @@ const InputTimer = () => {
       return timeToMicroBreak;
     } else {
       timeToMicroBreak.current -= timeRandomizationDeviation;
-      // console.log("nextMicroBreak = " + timeToMicroBreak.current);
       return timeToMicroBreak;
     }
   };
 
   const breakAlert = () => {
-    let audio = document.getElementById("a1") as HTMLAudioElement | null;
+    const audio = new Audio("../resources/bell.mp3");
     if (audio) {
       audio.play();
     }
   };
+
   useEffect(() => {
     breakAlert();
-  }, [isMicroBreak]);
+  }, [isMicroBreak.current]);
 
   if (seconds <= 0 && minutes > 0) {
     setSeconds((prevSeconds) => prevSeconds + 59);
@@ -65,22 +67,19 @@ const InputTimer = () => {
   }
   useEffect(() => {
     if (isTimeSet) {
-      timeUntilMicroBreak();
       interval.current = setInterval(() => {
         setSeconds((prevSeconds) => prevSeconds - 1);
         totalTimeCounter.current = totalTimeCounter.current + 1;
-        // timeToMicroBreak.current = timeToMicroBreak.current + 1;
-        if (isMicroBreak) {
-          tenSecBreak.current = tenSecBreak.current + 1;
-          // console.log("tensecBreak" + tenSecBreak.current);
-          if (tenSecBreak.current >= 10) {
-            isMicroBreak.current = false;
-            tenSecBreak.current = 0;
-          }
+        if (isMicroBreak.current) {
+          tenSecBreak.current = tenSecBreak.current - 1;
         }
-        // console.log("totTime " + totalTimeCounter.current);
-        // console.log("microbreak at " + timeToMicroBreak.current);
-      }, 1000);
+        if (tenSecBreak.current <= 0) {
+          isMicroBreak.current = false;
+          tenSecBreak.current = 10;
+          console.log(isMicroBreak);
+        }
+        console.log(isMicroBreak);
+      }, 100);
     }
     return () => clearInterval(interval.current);
   }, [isTimeSet]);
@@ -133,16 +132,6 @@ const InputTimer = () => {
                   step="1"
                   defaultValue="00"
                 />
-                <audio
-                  // controls
-                  id="a1"
-                  src="/resources/bell.mp3"
-                  crossOrigin="anonymous"
-                  preload="auto"
-                >
-                  Your browser does not support the
-                  <code>audio</code> element.
-                </audio>
                 <button type="submit" value="Submit" className="time-input">
                   Start
                 </button>
@@ -156,7 +145,7 @@ const InputTimer = () => {
           <button onClick={cancelTimerHandler} className="time-input">
             cancel
           </button>
-          {isMicroBreak && <p>BREAK</p>}
+          {isMicroBreak.current && <p>{tenSecBreak.current} of break left.</p>}
           <Timer hours={hours} minutes={minutes} seconds={seconds} />
         </>
       )}

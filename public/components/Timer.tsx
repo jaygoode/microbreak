@@ -19,39 +19,15 @@ const Timer = ({ seconds, minutes, hours }: timerProps) => {
       minutes: paddedNumbers(minutes),
       hours: paddedNumbers(hours),
     });
-    console.log(time.minutes);
-    console.log(minutes);
   }, [seconds]);
 
   const paddedNumbers = (number: number) => {
     let paddedNumbers = number.toString();
     if (paddedNumbers.length < 2) {
       paddedNumbers = "0".concat("", paddedNumbers);
-      console.log(paddedNumbers);
     }
     return paddedNumbers;
   };
-
-  // const convertSeconds = () => {
-
-  //   const convertedSeconds = Math.round(
-  //     (seconds / 60 - Math.floor(seconds / 60)) * 60
-  //   );
-  //   let paddedSeconds = convertedSeconds.toString();
-  //   if (paddedSeconds.length < 2) paddedSeconds = "0".concat("", paddedSeconds);
-
-  //   return paddedSeconds;
-  // };
-
-  // const convertMinutes = () => {
-  //   const convertedMinutes = Math.round(
-  //     (seconds / 60 - Math.floor(seconds / 60)) * 60
-  //   );
-  //   let paddedSeconds = convertedMinutes.toString();
-  //   if (paddedSeconds.length < 2) paddedSeconds = "0".concat("", paddedSeconds);
-
-  //   return paddedSeconds;
-  // };
 
   return (
     <div className="timer-wrapper">
