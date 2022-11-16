@@ -134,7 +134,6 @@ const InputTimer = () => {
                 <button type="submit" value="Submit" className="time-input">
                   Start
                 </button>
-                <button className="time-input">sound</button>
               </form>
             </div>
           </div>
