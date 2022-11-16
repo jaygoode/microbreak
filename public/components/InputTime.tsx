@@ -1,47 +1,41 @@
-import React from "react";
-// import { timerProps } from "./TimerInterface";
 import { useEffect, useState, useRef } from "react";
 import Timer from "./Timer";
 
 const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
-  const [isMicroBreak, setIsMicroBreak] = useState(false);
   const [isTimeSet, setIsTimeSet] = useState(false);
   const [prevTime, setPrevTime] = useState(null);
   const [seconds, setSeconds] = useState(1500);
   const interval = useRef<any>(null);
   const [hours, setHours] = useState(20);
   const [minutes, setMinutes] = useState(20);
+  const isMicroBreak = useRef(false);
+  const tenSecBreak = useRef(0);
+  const totalTimeCounter = useRef(0);
+  const timeToMicroBreak = useRef(0);
 
   const submitHandler = (e: any) => {
     e.preventDefault();
-    microBreakCounter = 0;
-    totalTimeCounter = 0;
+    totalTimeCounter.current = 0;
+    timeToMicroBreak.current = 1;
+    tenSecBreak.current = 0;
     setIsTimeSet(true);
-    setSeconds(
-      e.target[2].value + e.target[1].value * 60 + e.target[0].value * 3600
-    );
-    console.log(e.target[0].value * 3600);
-    console.log(e.target[1].value * 60);
-    console.log(e.target[2].value);
+    setSeconds(e.target[2].value);
+    setMinutes(e.target[1].value);
+    setHours(e.target[0].value);
   };
-
-  let microBreakCounter = 0;
-  let totalTimeCounter = 0;
-  let timeToMicroBreak = 0;
-  let microBreak = false;
 
   const timeUntilMicroBreak = () => {
     let timeRandomizationDeviation = Math.floor(Math.random() * 20);
-    timeToMicroBreak = 30;
+    timeToMicroBreak.current = 30;
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
-      timeToMicroBreak += timeRandomizationDeviation;
-      console.log("nextMicroBreak = " + timeToMicroBreak);
+      timeToMicroBreak.current += timeRandomizationDeviation;
+      // console.log("nextMicroBreak = " + timeToMicroBreak.current);
       return timeToMicroBreak;
     } else {
-      timeToMicroBreak -= timeRandomizationDeviation;
-      console.log("nextMicroBreak = " + timeToMicroBreak);
+      timeToMicroBreak.current -= timeRandomizationDeviation;
+      // console.log("nextMicroBreak = " + timeToMicroBreak.current);
       return timeToMicroBreak;
     }
   };
@@ -52,13 +46,41 @@ const InputTimer = () => {
       audio.play();
     }
   };
+  useEffect(() => {
+    breakAlert();
+  }, [isMicroBreak]);
 
+  if (seconds <= 0 && minutes > 0) {
+    setSeconds((prevSeconds) => prevSeconds + 59);
+    setMinutes((prevMinutes) => prevMinutes - 1);
+  }
+  if (minutes <= 0 && hours > 0) {
+    setMinutes((prevMinutes) => prevMinutes + 59);
+    setHours((prevHours) => prevHours - 1);
+  }
+  if (totalTimeCounter.current === timeToMicroBreak.current) {
+    isMicroBreak.current = true;
+    totalTimeCounter.current = 0;
+    timeUntilMicroBreak();
+  }
   useEffect(() => {
     if (isTimeSet) {
-      interval.current = setInterval(
-        () => setSeconds((prevSeconds) => prevSeconds - 1),
-        1000
-      );
+      timeUntilMicroBreak();
+      interval.current = setInterval(() => {
+        setSeconds((prevSeconds) => prevSeconds - 1);
+        totalTimeCounter.current = totalTimeCounter.current + 1;
+        // timeToMicroBreak.current = timeToMicroBreak.current + 1;
+        if (isMicroBreak) {
+          tenSecBreak.current = tenSecBreak.current + 1;
+          // console.log("tensecBreak" + tenSecBreak.current);
+          if (tenSecBreak.current >= 10) {
+            isMicroBreak.current = false;
+            tenSecBreak.current = 0;
+          }
+        }
+        // console.log("totTime " + totalTimeCounter.current);
+        // console.log("microbreak at " + timeToMicroBreak.current);
+      }, 1000);
     }
     return () => clearInterval(interval.current);
   }, [isTimeSet]);
@@ -68,8 +90,8 @@ const InputTimer = () => {
   };
 
   useEffect(() => {
-    if (seconds <= 0) {
-      setIsTimeSet(false);
+    if (seconds <= 0 && minutes <= 0 && hours <= 0) {
+      setTimerFinished(true);
       clearInterval(interval.current);
     }
   }, [seconds]);
@@ -124,9 +146,7 @@ const InputTimer = () => {
                 <button type="submit" value="Submit" className="time-input">
                   Start
                 </button>
-                <button onClick={breakAlert} className="time-input">
-                  sound
-                </button>
+                <button className="time-input">sound</button>
               </form>
             </div>
           </div>
@@ -136,8 +156,7 @@ const InputTimer = () => {
           <button onClick={cancelTimerHandler} className="time-input">
             cancel
           </button>
-          {seconds}
-          {microBreak && <p>{microBreakCounter}</p>}
+          {isMicroBreak && <p>BREAK</p>}
           <Timer hours={hours} minutes={minutes} seconds={seconds} />
         </>
       )}
