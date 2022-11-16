@@ -1,9 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import { useEffect, useState } from "react";
-import Timer from "./components/timer/timer";
-import InputTimer from "./components/timer/inputTime";
+import { useState } from "react";
+import InputTimer from "../public/components/InputTime";
 
 const Home: NextPage = () => {
   const [timerFinished, setTimerFinished] = useState(true);
