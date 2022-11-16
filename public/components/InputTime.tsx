@@ -33,7 +33,6 @@ const InputTimer = () => {
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
       timeToMicroBreak.current += timeRandomizationDeviation;
-      // console.log("nextMicroBreak = " + timeToMicroBreak.current);
       return timeToMicroBreak;
     } else {
       timeToMicroBreak.current -= timeRandomizationDeviation;
