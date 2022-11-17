@@ -1,3 +1,4 @@
+import { clear } from "console";
 import { useEffect, useState, useRef } from "react";
 import Timer from "./Timer";
 
@@ -86,6 +87,7 @@ const InputTimer = () => {
 
   const cancelTimerHandler = () => {
     setIsTimeSet(false);
+    clearInterval(interval.current);
   };
 
   useEffect(() => {
