@@ -8,9 +8,9 @@ export interface timerProps {
 
 const Timer = ({ seconds, minutes, hours }: timerProps) => {
   const [time, setTime] = useState<any>({
-    hours: "00",
-    minutes: "00",
-    seconds: "00",
+    hours: "",
+    minutes: "",
+    seconds: "",
   });
 
   useEffect(() => {

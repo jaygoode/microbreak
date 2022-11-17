@@ -30,7 +30,7 @@ const InputTimer = () => {
 
   const timeUntilMicroBreak = () => {
     let timeRandomizationDeviation = Math.floor(Math.random() * 15);
-    timeToMicroBreak.current = 120;
+    timeToMicroBreak.current = 30;
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
       timeToMicroBreak.current += timeRandomizationDeviation;
@@ -80,7 +80,7 @@ const InputTimer = () => {
           console.log(isMicroBreak);
         }
         console.log(isMicroBreak);
-      }, 1000);
+      }, 200);
     }
     return () => clearInterval(interval.current);
   }, [isTimeSet]);
