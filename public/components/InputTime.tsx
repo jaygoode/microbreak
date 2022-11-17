@@ -57,6 +57,7 @@ const InputTimer = () => {
   }
   if (minutes <= 0 && hours > 0) {
     setMinutes((prevMinutes) => prevMinutes + 59);
+    setSeconds((prevSeconds) => prevSeconds + 59);
     setHours((prevHours) => prevHours - 1);
   }
   if (totalTimeCounter.current === timeToMicroBreak.current) {
