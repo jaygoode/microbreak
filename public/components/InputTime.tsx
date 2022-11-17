@@ -6,11 +6,11 @@ const InputTimer = () => {
   const [timerFinished, setTimerFinished] = useState(true);
   const [isTimeSet, setIsTimeSet] = useState(false);
   const [prevTime, setPrevTime] = useState(null);
-  const [seconds, setSeconds] = useState(0);
   const interval = useRef<any>(null);
+  const isMicroBreak = useRef(false);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
-  const isMicroBreak = useRef(false);
+  const [seconds, setSeconds] = useState(0);
   const tenSecBreak = useRef(0);
   const totalTimeCounter = useRef(0);
   const timeToMicroBreak = useRef(1);
@@ -22,15 +22,15 @@ const InputTimer = () => {
     tenSecBreak.current = 10;
     isMicroBreak.current = false;
     setIsTimeSet(true);
-    setSeconds(e.target[2].value);
-    setMinutes(e.target[1].value);
-    setHours(e.target[0].value);
+    setSeconds(0);
+    setMinutes(parseInt(e.target[1].value));
+    setHours(parseInt(e.target[0].value));
     timeUntilMicroBreak();
   };
 
   const timeUntilMicroBreak = () => {
     let timeRandomizationDeviation = Math.floor(Math.random() * 15);
-    timeToMicroBreak.current = 30;
+    timeToMicroBreak.current = 120;
     const plusOrMinus = Math.random() < 0.5;
     if (plusOrMinus) {
       timeToMicroBreak.current += timeRandomizationDeviation;
@@ -80,7 +80,7 @@ const InputTimer = () => {
           console.log(isMicroBreak);
         }
         console.log(isMicroBreak);
-      }, 200);
+      }, 1000);
     }
     return () => clearInterval(interval.current);
   }, [isTimeSet]);
@@ -124,7 +124,7 @@ const InputTimer = () => {
                   step="1"
                   defaultValue="00"
                 />
-                <input
+                {/* <input
                   className="time-input"
                   type="number"
                   id="seconds"
@@ -133,7 +133,7 @@ const InputTimer = () => {
                   max="59"
                   step="1"
                   defaultValue="00"
-                />
+                /> */}
                 <button type="submit" value="Submit" className="time-input">
                   Start
                 </button>

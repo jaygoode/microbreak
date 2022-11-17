@@ -8,18 +8,10 @@ export interface timerProps {
 
 const Timer = ({ seconds, minutes, hours }: timerProps) => {
   const [time, setTime] = useState<any>({
-    hours: "",
-    minutes: "",
-    seconds: "",
+    hours: hours,
+    minutes: minutes,
+    seconds: seconds,
   });
-
-  useEffect(() => {
-    setTime({
-      seconds: paddedNumbers(seconds),
-      minutes: paddedNumbers(minutes),
-      hours: paddedNumbers(hours),
-    });
-  }, [seconds]);
 
   const paddedNumbers = (number: number) => {
     let paddedNumbers = number.toString();
@@ -28,6 +20,14 @@ const Timer = ({ seconds, minutes, hours }: timerProps) => {
     }
     return paddedNumbers;
   };
+
+  useEffect(() => {
+    setTime({
+      seconds: paddedNumbers(seconds),
+      minutes: paddedNumbers(minutes),
+      hours: paddedNumbers(hours),
+    });
+  }, [seconds]);
 
   return (
     <div className="timer-wrapper">
